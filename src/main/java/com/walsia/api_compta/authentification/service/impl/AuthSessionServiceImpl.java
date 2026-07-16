@@ -73,8 +73,8 @@ public class AuthSessionServiceImpl implements AuthSessionService {
         // ce qui pilote la redirection post-connexion (portes email/mot de passe), pas le
         // profil complet - cf. UtilisateurConsultationService pour la vue complète via /me.
         UtilisateurReadDto infoConnexion = new UtilisateurReadDto(
-                null, null, null, null, false,
-                utilisateur.isEmailVerifie(), utilisateur.isMotDePasseTemporaire(), null);
+                null, null, null, null, null, null, false,
+                utilisateur.isEmailVerifie(), utilisateur.isMotDePasseTemporaire(), null, null);
         return new SessionConnectee(infoConnexion, tokenEnClair);
     }
 

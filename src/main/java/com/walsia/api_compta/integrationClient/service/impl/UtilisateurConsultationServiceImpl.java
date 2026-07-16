@@ -22,7 +22,8 @@ public class UtilisateurConsultationServiceImpl implements UtilisateurConsultati
                 .orElseThrow(() -> new RessourceIntrouvableException("Utilisateur introuvable"));
 
         return new UtilisateurReadDto(
-                null, utilisateur.getNom(), utilisateur.getEmail(), utilisateur.getRole(),
-                false, utilisateur.isEmailVerifie(), false, null);
+                null, utilisateur.getNom(), utilisateur.getPostNom(), utilisateur.getPrenom(),
+                utilisateur.getEmail(), utilisateur.getRole(),
+                false, utilisateur.isEmailVerifie(), false, null, null);
     }
 }

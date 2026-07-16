@@ -30,6 +30,8 @@ public record EntiteCreationForm(
         @NotBlank
         String adminNom,
 
+        String adminPostNom,
+
         @NotBlank
         String adminPrenom,
 

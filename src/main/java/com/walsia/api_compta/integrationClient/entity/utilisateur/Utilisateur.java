@@ -4,6 +4,8 @@ import com.walsia.api_compta.integrationClient.entity.entite.Entite;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * Utilisateur de l'application, rattaché à une Entite (PME, ONG...).
  * Le rôle détermine les droits d'accès aux modules administratif et financier.
@@ -23,6 +25,12 @@ public class Utilisateur {
 
     @Column(nullable = false)
     private String nom;
+
+    @Column(name = "post_nom")
+    private String postNom;
+
+    @Column(nullable = false)
+    private String prenom;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -47,4 +55,7 @@ public class Utilisateur {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "entite_id", nullable = false)
     private Entite entite;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

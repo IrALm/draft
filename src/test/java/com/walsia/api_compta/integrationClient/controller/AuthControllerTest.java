@@ -53,7 +53,7 @@ class AuthControllerTest {
     void login_succes_poseLeCookieEtNeRenvoieQueLesChampsDePorte() throws Exception {
         // DTO volontairement partiel, comme le construit réellement AuthSessionServiceImpl.connecter :
         // seuls les champs pilotant la redirection post-login sont peuplés, pas le profil complet.
-        UtilisateurReadDto dto = new UtilisateurReadDto(null, null, null, null, false, true, false, null);
+        UtilisateurReadDto dto = new UtilisateurReadDto(null, null, null, null, null, null, false, true, false, null, null);
         when(authSessionService.connecter("jane@doe.com", "secret"))
                 .thenReturn(new AuthSessionService.SessionConnectee(dto, "token-opaque"));
         when(sessionCookieHelper.construireCookieConnexion("token-opaque"))

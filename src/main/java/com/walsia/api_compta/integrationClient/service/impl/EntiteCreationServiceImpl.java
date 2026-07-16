@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -106,7 +107,9 @@ public class EntiteCreationServiceImpl implements EntiteCreationService {
         Utilisateur utilisateur;
         try {
             utilisateur = utilisateurRepository.save(Utilisateur.builder()
-                    .nom(form.adminPrenom() + " " + form.adminNom())
+                    .nom(form.adminNom())
+                    .postNom(form.adminPostNom())
+                    .prenom(form.adminPrenom())
                     .email(form.adminEmail())
                     .role(Role.ADMIN)
                     .actif(true)
@@ -114,6 +117,7 @@ public class EntiteCreationServiceImpl implements EntiteCreationService {
                     .emailVerifie(false)
                     .motDePasseTemporaire(true)
                     .entite(entite)
+                    .createdAt(LocalDateTime.now())
                     .build());
         } catch (RuntimeException e) {
             keycloakAdminService.supprimerUtilisateur(keycloakId);
