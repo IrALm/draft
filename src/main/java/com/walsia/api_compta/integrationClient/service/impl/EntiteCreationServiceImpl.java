@@ -5,19 +5,19 @@ import com.walsia.api_compta.integrationClient.dto.readDto.EntiteCreeeReadDto;
 import com.walsia.api_compta.integrationClient.entity.entite.Entite;
 import com.walsia.api_compta.integrationClient.entity.referentiel.ReferentielComptable;
 import com.walsia.api_compta.integrationClient.entity.utilisateur.Role;
-import com.walsia.api_compta.integrationClient.entity.utilisateur.UserTokenType;
+import com.walsia.api_compta.authentification.entity.UserTokenType;
 import com.walsia.api_compta.integrationClient.entity.utilisateur.Utilisateur;
-import com.walsia.api_compta.integrationClient.exception.ConflitException;
-import com.walsia.api_compta.integrationClient.exception.RessourceIntrouvableException;
+import com.walsia.api_compta.exception.ConflitException;
+import com.walsia.api_compta.exception.RessourceIntrouvableException;
 import com.walsia.api_compta.integrationClient.mapper.EntiteMapper;
 import com.walsia.api_compta.integrationClient.mapper.UtilisateurMapper;
 import com.walsia.api_compta.integrationClient.repository.EntiteRepository;
 import com.walsia.api_compta.integrationClient.repository.ReferentielComptableRepository;
 import com.walsia.api_compta.integrationClient.repository.UtilisateurRepository;
 import com.walsia.api_compta.integrationClient.service.interfaces.EntiteCreationService;
-import com.walsia.api_compta.integrationClient.service.interfaces.KeycloakAdminService;
-import com.walsia.api_compta.integrationClient.service.interfaces.MailService;
-import com.walsia.api_compta.integrationClient.service.interfaces.UserTokenService;
+import com.walsia.api_compta.authentification.service.interfaces.KeycloakAdminService;
+import com.walsia.api_compta.mail.service.interfaces.MailService;
+import com.walsia.api_compta.authentification.service.interfaces.UserTokenService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -103,6 +103,7 @@ public class EntiteCreationServiceImpl implements EntiteCreationService {
                     .actif(true)
                     .keycloakId(keycloakId)
                     .emailVerifie(false)
+                    .motDePasseTemporaire(true)
                     .entite(entite)
                     .build());
         } catch (RuntimeException e) {

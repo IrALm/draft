@@ -40,6 +40,10 @@ public class Utilisateur {
     @Column(name = "email_verifie", nullable = false)
     private boolean emailVerifie = false;
 
+    /** Vrai tant que l'utilisateur n'a pas défini son mot de passe définitif (post-création). */
+    @Column(name = "mot_de_passe_temporaire", nullable = false)
+    private boolean motDePasseTemporaire = true;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "entite_id", nullable = false)
     private Entite entite;

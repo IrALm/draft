@@ -27,12 +27,17 @@ app:
     display-name: ${MAIL_FROM_DISPLAY_NAME:ERP Comptable}
   frontend:
     base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+  session:
+    encryption-key: ${SESSION_ENCRYPTION_KEY:changeme-32-bytes-base64-key-dev}
+    cookie-secure: ${SESSION_COOKIE_SECURE:true}
 
 keycloak:
   realm: ${KEYCLOAK_REALM:erp-comptable}
   auth-server-url: ${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8081}
   admin-client-id: ${KEYCLOAK_ADMIN_CLIENT_ID:api-compta-admin}
   admin-client-secret: ${KC_APP_CLIENT_SECRET:changeme}
+  bff-client-id: ${KC_BFF_CLIENT_ID:api-compta-bff}
+  bff-client-secret: ${KC_BFF_CLIENT_SECRET:changeme}
 
 logging:
   level:

@@ -9,6 +9,7 @@ public record UtilisateurReadDto(
         Role role,
         boolean actif,
         boolean emailVerifie,
+        boolean motDePasseTemporaire,
         String entiteId
 ) {
 }
