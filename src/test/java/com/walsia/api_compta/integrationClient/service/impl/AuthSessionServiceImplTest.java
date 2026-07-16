@@ -1,12 +1,10 @@
 package com.walsia.api_compta.integrationClient.service.impl;
 
 import com.walsia.api_compta.authentification.service.impl.AuthSessionServiceImpl;
-import com.walsia.api_compta.integrationClient.dto.readDto.UtilisateurReadDto;
 import com.walsia.api_compta.integrationClient.entity.utilisateur.Role;
 import com.walsia.api_compta.authentification.entity.UserSession;
 import com.walsia.api_compta.integrationClient.entity.utilisateur.Utilisateur;
 import com.walsia.api_compta.exception.AuthentificationEchoueeException;
-import com.walsia.api_compta.integrationClient.mapper.UtilisateurMapper;
 import com.walsia.api_compta.authentification.repository.UserSessionRepository;
 import com.walsia.api_compta.integrationClient.repository.UtilisateurRepository;
 import com.walsia.api_compta.authentification.service.interfaces.AuthSessionService;
@@ -40,8 +38,6 @@ class AuthSessionServiceImplTest {
     private KeycloakAuthService keycloakAuthService;
     @Mock
     private TokenCipherService tokenCipherService;
-    @Mock
-    private UtilisateurMapper utilisateurMapper;
 
     private AuthSessionServiceImpl authSessionService;
 
@@ -50,7 +46,7 @@ class AuthSessionServiceImplTest {
     @BeforeEach
     void setUp() {
         authSessionService = new AuthSessionServiceImpl(
-                utilisateurRepository, userSessionRepository, keycloakAuthService, tokenCipherService, utilisateurMapper);
+                utilisateurRepository, userSessionRepository, keycloakAuthService, tokenCipherService);
 
         utilisateur = Utilisateur.builder()
                 .id("user-1")
@@ -71,12 +67,13 @@ class AuthSessionServiceImplTest {
         when(keycloakAuthService.connecterAvecMotDePasse("jane@doe.com", "secret"))
                 .thenReturn(new TokensKeycloak("access-jwt", 300, "refresh-jwt", 1800));
         when(utilisateurRepository.findByEmail("jane@doe.com")).thenReturn(Optional.of(utilisateur));
-        UtilisateurReadDto dto = new UtilisateurReadDto("user-1", "Doe", "jane@doe.com", Role.ADMIN, true, true, false, "entite-1");
-        when(utilisateurMapper.toReadDto(utilisateur)).thenReturn(dto);
 
         AuthSessionService.SessionConnectee resultat = authSessionService.connecter("jane@doe.com", "secret");
 
-        assertThat(resultat.utilisateur()).isEqualTo(dto);
+        assertThat(resultat.utilisateur().emailVerifie()).isTrue();
+        assertThat(resultat.utilisateur().motDePasseTemporaire()).isFalse();
+        assertThat(resultat.utilisateur().id()).isNull();
+        assertThat(resultat.utilisateur().entiteId()).isNull();
         assertThat(resultat.tokenSessionEnClair()).isNotBlank();
 
         ArgumentCaptor<UserSession> captor = ArgumentCaptor.forClass(UserSession.class);

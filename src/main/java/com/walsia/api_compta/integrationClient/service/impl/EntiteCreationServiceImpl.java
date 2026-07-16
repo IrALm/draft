@@ -9,8 +9,11 @@ import com.walsia.api_compta.authentification.entity.UserTokenType;
 import com.walsia.api_compta.integrationClient.entity.utilisateur.Utilisateur;
 import com.walsia.api_compta.exception.ConflitException;
 import com.walsia.api_compta.exception.RessourceIntrouvableException;
+import com.walsia.api_compta.integrationClient.dto.readDto.EntiteReadDto;
 import com.walsia.api_compta.integrationClient.mapper.EntiteMapper;
 import com.walsia.api_compta.integrationClient.mapper.UtilisateurMapper;
+import com.walsia.api_compta.integrationClient.repository.ClasseCompteComptableRepository;
+import com.walsia.api_compta.integrationClient.repository.CompteComptableRepository;
 import com.walsia.api_compta.integrationClient.repository.EntiteRepository;
 import com.walsia.api_compta.integrationClient.repository.ReferentielComptableRepository;
 import com.walsia.api_compta.integrationClient.repository.UtilisateurRepository;
@@ -40,6 +43,8 @@ public class EntiteCreationServiceImpl implements EntiteCreationService {
     private final UserTokenService userTokenService;
     private final EntiteMapper entiteMapper;
     private final UtilisateurMapper utilisateurMapper;
+    private final ClasseCompteComptableRepository classeCompteComptableRepository;
+    private final CompteComptableRepository compteComptableRepository;
 
     public EntiteCreationServiceImpl(
             EntiteRepository entiteRepository,
@@ -49,7 +54,9 @@ public class EntiteCreationServiceImpl implements EntiteCreationService {
             MailService mailService,
             UserTokenService userTokenService,
             EntiteMapper entiteMapper,
-            UtilisateurMapper utilisateurMapper) {
+            UtilisateurMapper utilisateurMapper,
+            ClasseCompteComptableRepository classeCompteComptableRepository,
+            CompteComptableRepository compteComptableRepository) {
         this.entiteRepository = entiteRepository;
         this.utilisateurRepository = utilisateurRepository;
         this.referentielComptableRepository = referentielComptableRepository;
@@ -58,6 +65,8 @@ public class EntiteCreationServiceImpl implements EntiteCreationService {
         this.userTokenService = userTokenService;
         this.entiteMapper = entiteMapper;
         this.utilisateurMapper = utilisateurMapper;
+        this.classeCompteComptableRepository = classeCompteComptableRepository;
+        this.compteComptableRepository = compteComptableRepository;
     }
 
     @Override
@@ -115,7 +124,7 @@ public class EntiteCreationServiceImpl implements EntiteCreationService {
         String tokenVerification = userTokenService.genererToken(utilisateur, UserTokenType.EMAIL_VERIFICATION);
         mailService.envoyerEmailVerification(form.adminEmail(), form.adminPrenom(), tokenVerification);
 
-        return new EntiteCreeeReadDto(entiteMapper.toReadDto(entite), utilisateurMapper.toReadDto(utilisateur));
+        return new EntiteCreeeReadDto(avecCompteurs(entite), utilisateurMapper.toReadDto(utilisateur));
     }
 
     private String genererMotDePasseTemporaire() {
@@ -124,5 +133,18 @@ public class EntiteCreationServiceImpl implements EntiteCreationService {
             motDePasse.append(CARACTERES_MOT_DE_PASSE.charAt(SECURE_RANDOM.nextInt(CARACTERES_MOT_DE_PASSE.length())));
         }
         return motDePasse.toString();
+    }
+
+    /** Complète l'EntiteReadDto avec les compteurs du référentiel (classes/comptes), non portés par le mapper. */
+    private EntiteReadDto avecCompteurs(Entite entite) {
+        EntiteReadDto base = entiteMapper.toReadDto(entite);
+        String referentielId = entite.getReferentielComptable().getId();
+        long nombreClasses = classeCompteComptableRepository.countByReferentielComptable_Id(referentielId);
+        long nombreComptes = compteComptableRepository.countByClasseCompteComptable_ReferentielComptable_Id(referentielId);
+        return new EntiteReadDto(
+                base.id(), base.raisonSociale(), base.typeEntite(), base.pays(), base.devise(),
+                base.numeroIdentification(), base.dateCreation(), base.actif(),
+                base.referentielComptableCode(), base.referentielComptableLibelle(),
+                nombreClasses, nombreComptes);
     }
 }

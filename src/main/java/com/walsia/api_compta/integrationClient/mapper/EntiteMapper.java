@@ -10,5 +10,7 @@ public interface EntiteMapper {
 
     @Mapping(target = "referentielComptableCode", source = "referentielComptable.code")
     @Mapping(target = "referentielComptableLibelle", source = "referentielComptable.libelle")
+    @Mapping(target = "nombreClasses", ignore = true)
+    @Mapping(target = "nombreComptes", ignore = true)
     EntiteReadDto toReadDto(Entite entite);
 }

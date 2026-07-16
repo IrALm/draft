@@ -15,6 +15,8 @@ public record EntiteReadDto(
         LocalDate dateCreation,
         boolean actif,
         CodeReferentiel referentielComptableCode,
-        String referentielComptableLibelle
+        String referentielComptableLibelle,
+        long nombreClasses,
+        long nombreComptes
 ) {
 }

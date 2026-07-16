@@ -3,7 +3,6 @@ package com.walsia.api_compta.integrationClient.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.walsia.api_compta.authentification.controller.AuthController;
 import com.walsia.api_compta.integrationClient.dto.readDto.UtilisateurReadDto;
-import com.walsia.api_compta.integrationClient.entity.utilisateur.Role;
 import com.walsia.api_compta.exception.AuthentificationEchoueeException;
 import com.walsia.api_compta.authentification.security.SessionCookieHelper;
 import com.walsia.api_compta.authentification.service.interfaces.AuthAccountService;
@@ -51,8 +50,10 @@ class AuthControllerTest {
 
     @Test
     @WithMockUser
-    void login_succes_poseLeCookieEtNeRenvoieJamaisLeJwt() throws Exception {
-        UtilisateurReadDto dto = new UtilisateurReadDto("user-1", "Doe", "jane@doe.com", Role.ADMIN, true, true, false, "entite-1");
+    void login_succes_poseLeCookieEtNeRenvoieQueLesChampsDePorte() throws Exception {
+        // DTO volontairement partiel, comme le construit réellement AuthSessionServiceImpl.connecter :
+        // seuls les champs pilotant la redirection post-login sont peuplés, pas le profil complet.
+        UtilisateurReadDto dto = new UtilisateurReadDto(null, null, null, null, false, true, false, null);
         when(authSessionService.connecter("jane@doe.com", "secret"))
                 .thenReturn(new AuthSessionService.SessionConnectee(dto, "token-opaque"));
         when(sessionCookieHelper.construireCookieConnexion("token-opaque"))
@@ -64,6 +65,9 @@ class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(new LoginPayload("jane@doe.com", "secret"))))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Set-Cookie", org.hamcrest.Matchers.containsString(SessionCookieHelper.NOM_COOKIE)))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.emailVerifie").value(true))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.motDePasseTemporaire").value(false))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.id").value(org.hamcrest.Matchers.nullValue()))
                 .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
                         .string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("token-opaque"))));
     }

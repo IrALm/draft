@@ -1,9 +1,9 @@
 package com.walsia.api_compta.authentification.service.impl;
 
 import com.walsia.api_compta.authentification.entity.UserSession;
+import com.walsia.api_compta.integrationClient.dto.readDto.UtilisateurReadDto;
 import com.walsia.api_compta.integrationClient.entity.utilisateur.Utilisateur;
 import com.walsia.api_compta.exception.AuthentificationEchoueeException;
-import com.walsia.api_compta.integrationClient.mapper.UtilisateurMapper;
 import com.walsia.api_compta.authentification.repository.UserSessionRepository;
 import com.walsia.api_compta.integrationClient.repository.UtilisateurRepository;
 import com.walsia.api_compta.authentification.service.interfaces.AuthSessionService;
@@ -33,19 +33,16 @@ public class AuthSessionServiceImpl implements AuthSessionService {
     private final UserSessionRepository userSessionRepository;
     private final KeycloakAuthService keycloakAuthService;
     private final TokenCipherService tokenCipherService;
-    private final UtilisateurMapper utilisateurMapper;
 
     public AuthSessionServiceImpl(
             UtilisateurRepository utilisateurRepository,
             UserSessionRepository userSessionRepository,
             KeycloakAuthService keycloakAuthService,
-            TokenCipherService tokenCipherService,
-            UtilisateurMapper utilisateurMapper) {
+            TokenCipherService tokenCipherService) {
         this.utilisateurRepository = utilisateurRepository;
         this.userSessionRepository = userSessionRepository;
         this.keycloakAuthService = keycloakAuthService;
         this.tokenCipherService = tokenCipherService;
-        this.utilisateurMapper = utilisateurMapper;
     }
 
     @Override
@@ -72,7 +69,13 @@ public class AuthSessionServiceImpl implements AuthSessionService {
                 .build();
         userSessionRepository.save(session);
 
-        return new SessionConnectee(utilisateurMapper.toReadDto(utilisateur), tokenEnClair);
+        // DTO volontairement partiel : le login n'a besoin de communiquer au frontend que
+        // ce qui pilote la redirection post-connexion (portes email/mot de passe), pas le
+        // profil complet - cf. UtilisateurConsultationService pour la vue complète via /me.
+        UtilisateurReadDto infoConnexion = new UtilisateurReadDto(
+                null, null, null, null, false,
+                utilisateur.isEmailVerifie(), utilisateur.isMotDePasseTemporaire(), null);
+        return new SessionConnectee(infoConnexion, tokenEnClair);
     }
 
     @Override
