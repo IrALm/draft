@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/${POSTGRES_METIER_DB:erp_metier}
+    username: ${POSTGRES_METIER_USER:erp_user}
+    password: ${POSTGRES_METIER_PASSWORD:erp_password}
+
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    com.walsia.api_compta: debug
