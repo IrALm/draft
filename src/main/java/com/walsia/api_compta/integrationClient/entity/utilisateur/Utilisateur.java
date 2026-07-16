@@ -33,6 +33,13 @@ public class Utilisateur {
 
     private boolean actif = true;
 
+    /** Identifiant de l'utilisateur dans Keycloak (realm erp-comptable), source de vérité des identifiants/mot de passe. */
+    @Column(name = "keycloak_id", unique = true)
+    private String keycloakId;
+
+    @Column(name = "email_verifie", nullable = false)
+    private boolean emailVerifie = false;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "entite_id", nullable = false)
     private Entite entite;

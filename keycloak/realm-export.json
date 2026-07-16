@@ -1,0 +1,64 @@
+{
+  "realm": "erp-comptable",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "resetPasswordAllowed": false,
+  "verifyEmail": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "accessTokenLifespan": 300,
+
+  "roles": {
+    "realm": [
+      { "name": "ADMIN", "description": "Administrateur de l'entite (chef d'entreprise)" },
+      { "name": "COMPTABLE", "description": "Gestion comptable" },
+      { "name": "RH", "description": "Gestion des ressources humaines" },
+      { "name": "ACHATS", "description": "Gestion des achats" },
+      { "name": "CAISSIER", "description": "Gestion de caisse" },
+      { "name": "LECTURE_SEULE", "description": "Acces en lecture seule" }
+    ]
+  },
+
+  "clients": [
+    {
+      "clientId": "api-compta-admin",
+      "name": "API Compta - Admin (service account)",
+      "description": "Client de service dedie, utilise uniquement par KeycloakAdminClient (backend) pour creer/gerer les utilisateurs via l'Admin REST API. Ne doit jamais etre utilise pour authentifier un utilisateur final.",
+      "enabled": true,
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "clientAuthenticatorType": "client-secret",
+      "secret": "${KC_APP_CLIENT_SECRET}",
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "authorizationServicesEnabled": false
+    },
+    {
+      "clientId": "erp-comptable-app",
+      "name": "API Compta - Application",
+      "description": "Client utilise par le frontend / les clients API pour authentifier les utilisateurs finaux (Authorization Code). directAccessGrantsEnabled active en dev pour faciliter les tests (Postman, etc.) - a desactiver en production.",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "redirectUris": ["http://localhost:3000/*"],
+      "webOrigins": ["+"]
+    }
+  ],
+
+  "users": [
+    {
+      "username": "service-account-api-compta-admin",
+      "enabled": true,
+      "serviceAccountClientId": "api-compta-admin",
+      "clientRoles": {
+        "realm-management": ["manage-users", "view-users", "view-realm"]
+      }
+    }
+  ]
+}
