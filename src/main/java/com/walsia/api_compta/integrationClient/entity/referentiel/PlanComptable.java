@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Instance du plan de comptes pour une Entite donnée, dérivée d'un
- * ReferentielComptable. Permet à une PME et une ONG d'avoir chacune
- * leur propre jeu de comptes, tout en partageant la même structure
- * normative de référence.
+ * Version officielle et datée du plan de comptes d'un ReferentielComptable
+ * (ex : SYSCOHADA Normal révisé 2018), partagée par toutes les Entite qui
+ * utilisent ce référentiel. Les comptes personnalisés d'une entreprise sont
+ * portés par CompteComptable.entite, pas par une duplication de PlanComptable.
  */
 @Entity
 @Table(name = "plan_comptable")
