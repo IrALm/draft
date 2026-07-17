@@ -1,7 +1,6 @@
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TABLE referentiel_comptable
 (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid()
+    id          VARCHAR(36) PRIMARY KEY,
     code        VARCHAR(30)  NOT NULL,
     libelle     VARCHAR(255) NOT NULL,
     description VARCHAR(255),
