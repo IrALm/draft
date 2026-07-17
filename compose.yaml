@@ -82,6 +82,10 @@ services:
       # dans keycloak/realm-export.json au moment de l'import du realm
       KC_APP_CLIENT_SECRET: ${KC_APP_CLIENT_SECRET}
 
+      # Secret du client BFF (login/logout backend-mediated), substitue de la
+      # meme maniere dans realm-export.json (client api-compta-bff)
+      KC_BFF_CLIENT_SECRET: ${KC_BFF_CLIENT_SECRET}
+
       # Dev only: autorise l'acces via localhost sans hostname strict/TLS
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
