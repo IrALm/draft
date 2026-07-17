@@ -64,7 +64,7 @@
     {
       "clientId": "api-compta-bff",
       "name": "API Compta - BFF (login/logout backend-mediated)",
-      "description": "Client confidentiel first-party (ROPC) d'api-compta : echange les identifiants utilisateur contre des tokens, les rafraichit/revoque. JWT jamais transmis au frontend (cookie opaque). Ne supporte pas le MFA - revoir avant CONFIGURE_TOTP.",
+      "description": "Client confidentiel first-party (ROPC) d'api-compta : echange les identifiants utilisateur contre des tokens, les rafraichit/revoque.",
       "enabled": true,
       "publicClient": false,
       "protocol": "openid-connect",
