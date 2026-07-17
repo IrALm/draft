@@ -42,7 +42,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             EmailVerifieFilter emailVerifieFilter,
-            SessionCookieAuthenticationFilter sessionCookieAuthenticationFilter) throws Exception {
+            SessionCookieAuthenticationFilter sessionCookieAuthenticationFilter,
+            CsrfDoubleSubmitFilter csrfDoubleSubmitFilter,
+            RateLimitFilter rateLimitFilter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -55,6 +57,8 @@ public class SecurityConfig {
                         .requestMatchers(ENDPOINTS_DOCUMENTATION).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                .addFilterBefore(csrfDoubleSubmitFilter, BearerTokenAuthenticationFilter.class)
+                .addFilterBefore(rateLimitFilter, CsrfDoubleSubmitFilter.class)
                 .addFilterAfter(sessionCookieAuthenticationFilter, BearerTokenAuthenticationFilter.class)
                 .addFilterAfter(emailVerifieFilter, SessionCookieAuthenticationFilter.class);
         return http.build();

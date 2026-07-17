@@ -59,6 +59,10 @@ class AuthControllerTest {
         when(sessionCookieHelper.construireCookieConnexion("token-opaque"))
                 .thenReturn(org.springframework.http.ResponseCookie.from(SessionCookieHelper.NOM_COOKIE, "token-opaque")
                         .httpOnly(true).build());
+        when(sessionCookieHelper.genererValeurCsrf()).thenReturn("csrf-genere");
+        when(sessionCookieHelper.construireCookieCsrf("csrf-genere"))
+                .thenReturn(org.springframework.http.ResponseCookie.from(SessionCookieHelper.NOM_COOKIE_CSRF, "csrf-genere")
+                        .httpOnly(false).build());
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -91,6 +95,9 @@ class AuthControllerTest {
         when(sessionCookieHelper.construireCookieDeconnexion())
                 .thenReturn(org.springframework.http.ResponseCookie.from(SessionCookieHelper.NOM_COOKIE, "")
                         .httpOnly(true).maxAge(0).build());
+        when(sessionCookieHelper.construireCookieCsrfSuppression())
+                .thenReturn(org.springframework.http.ResponseCookie.from(SessionCookieHelper.NOM_COOKIE_CSRF, "")
+                        .httpOnly(false).maxAge(0).build());
 
         mockMvc.perform(post("/api/auth/logout"))
                 .andExpect(status().isNoContent())

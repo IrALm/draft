@@ -42,8 +42,10 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<UtilisateurReadDto> login(@Valid @RequestBody LoginForm form) {
         AuthSessionService.SessionConnectee session = authSessionService.connecter(form.email(), form.motDePasse());
+        String valeurCsrf = sessionCookieHelper.genererValeurCsrf();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, sessionCookieHelper.construireCookieConnexion(session.tokenSessionEnClair()).toString())
+                .header(HttpHeaders.SET_COOKIE, sessionCookieHelper.construireCookieCsrf(valeurCsrf).toString())
                 .body(session.utilisateur());
     }
 
@@ -52,6 +54,7 @@ public class AuthController {
         sessionCookieHelper.lireToken(request).ifPresent(authSessionService::deconnecter);
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, sessionCookieHelper.construireCookieDeconnexion().toString())
+                .header(HttpHeaders.SET_COOKIE, sessionCookieHelper.construireCookieCsrfSuppression().toString())
                 .build();
     }
 
