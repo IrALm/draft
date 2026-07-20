@@ -40,6 +40,9 @@ public class Tiers {
     /** Numéro d'identification fiscale / registre de commerce du tiers */
     private String numeroFiscal;
 
+    /** Intitulé du poste, pertinent uniquement si type = SALARIE */
+    private String intitulePoste;
+
     private boolean actif = true;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
