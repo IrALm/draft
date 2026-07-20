@@ -6,10 +6,28 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface CompteComptableRepository
         extends JpaRepository<CompteComptable, String>, JpaSpecificationExecutor<CompteComptable> {
 
     long countByClasseCompteComptable_ReferentielComptable_Id(String referentielComptableId);
+
+    boolean existsByPlanComptable_IdAndNumero(String planComptableId, String numero);
+
+    /** Comptes d'une classe dans un plan donné, triés par numero : standards (entite null) + spécifiques de l'appelant.
+     * Sert à alimenter le select « Compte parent » du formulaire de création. */
+    @Query("""
+            SELECT c FROM CompteComptable c
+            WHERE c.classeCompteComptable.id = :classeId
+            AND c.planComptable.id = :planComptableId
+            AND (c.entite IS NULL OR c.entite.id = :entiteId)
+            ORDER BY c.numero
+            """)
+    List<CompteComptable> findVisiblesParClasse(
+            @Param("classeId") String classeId,
+            @Param("planComptableId") String planComptableId,
+            @Param("entiteId") String entiteId);
 
     /** Comptes visibles d'une classe dans un plan donné : standards (entite null) + spécifiques de l'appelant. */
     @Query("""
